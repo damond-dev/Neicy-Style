@@ -5,30 +5,36 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-const DEFAULT_IMAGES = [
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380334/10_hdk0va.jpg', alt: 'Coloración profesional' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380335/12_iogh1b.jpg', alt: 'Keratina' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380334/11_fugawz.jpg', alt: 'Botox capilar' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380334/WhatsApp_Image_2026-06-13_at_3.28.31_PM_pf4slo.jpg', alt: 'Transformación' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380329/3_xdqcm3.jpg', alt: 'Corte' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380329/13_urfemc.jpg', alt: 'Peinado elegante' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/7_qckwb3.jpg', alt: 'Cabello brillante' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/2_hfsoip.jpg', alt: 'Hidratación profunda' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/9_ybtm7c.jpg', alt: 'Resultado final' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/1_zjs2ds.jpg', alt: 'Antes y después' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380321/6_lpaf7n.jpg', alt: 'Tratamiento capilar' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380321/5_zsbwy3.jpg', alt: 'Coloración' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380318/8_fhkwcb.jpg', alt: 'Corte moderno' },
-  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380318/4_uqw9sz.jpg', alt: 'Cabello saludable' },
+interface GalleryImage {
+  src: string;
+  alt: string;
+  publicId?: string;
+  isDefault?: boolean;
+}
+
+const DEFAULT_IMAGES: GalleryImage[] = [
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380334/10_hdk0va.jpg', alt: 'Coloración profesional', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380335/12_iogh1b.jpg', alt: 'Keratina', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380334/11_fugawz.jpg', alt: 'Botox capilar', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380334/WhatsApp_Image_2026-06-13_at_3.28.31_PM_pf4slo.jpg', alt: 'Transformación', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380329/3_xdqcm3.jpg', alt: 'Corte', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380329/13_urfemc.jpg', alt: 'Peinado elegante', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/7_qckwb3.jpg', alt: 'Cabello brillante', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/2_hfsoip.jpg', alt: 'Hidratación profunda', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/9_ybtm7c.jpg', alt: 'Resultado final', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380326/1_zjs2ds.jpg', alt: 'Antes y después', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380321/6_lpaf7n.jpg', alt: 'Tratamiento capilar', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380321/5_zsbwy3.jpg', alt: 'Coloración', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380318/8_fhkwcb.jpg', alt: 'Corte moderno', isDefault: true },
+  { src: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781380318/4_uqw9sz.jpg', alt: 'Cabello saludable', isDefault: true },
 ];
 
 const CLOUD_NAME = 'dsqjvn7xw';
 const UPLOAD_PRESET = 'neicy_gallery';
 const PASSWORD = 'neicy2024';
-const STORAGE_KEY = 'neicy_gallery_images';
 
 export default function Gallery() {
-  const [uploadedImages, setUploadedImages] = useState<{ src: string; alt: string }[]>([]);
+  const [cloudinaryImages, setCloudinaryImages] = useState<GalleryImage[]>([]);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showActionPanel, setShowActionPanel] = useState(false);
   const [showUploadInput, setShowUploadInput] = useState(false);
@@ -36,28 +42,28 @@ export default function Gallery() {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const images = [...uploadedImages, ...DEFAULT_IMAGES];
+  const images = [...cloudinaryImages, ...DEFAULT_IMAGES];
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setUploadedImages(parsed);
-      } catch {
-        setUploadedImages([]);
-      }
-    }
+    fetch('/api/gallery')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.images) {
+          setCloudinaryImages(data.images);
+        }
+      })
+      .catch((err) => console.error('Error fetching gallery:', err));
   }, []);
 
   useEffect(() => {
     if (carouselRef.current) {
       carouselRef.current.scrollLeft = 0;
     }
-  }, [uploadedImages]);
+  }, [cloudinaryImages]);
 
   const handlePasswordSubmit = () => {
     if (password === PASSWORD) {
@@ -76,6 +82,7 @@ export default function Gallery() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('tags', 'neicy_gallery');
 
     try {
       const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
@@ -83,13 +90,13 @@ export default function Gallery() {
         body: formData,
       });
       const data = await res.json();
-      if (data.secure_url) {
-        const newImage = { src: data.secure_url, alt: 'Nueva imagen' };
-        setUploadedImages((prev) => {
-          const updated = [newImage, ...prev];
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-          return updated;
-        });
+      if (data.secure_url && data.public_id) {
+        const newImage: GalleryImage = {
+          src: `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/q_auto,f_auto/${data.public_id}.${data.format}`,
+          alt: data.public_id,
+          publicId: data.public_id,
+        };
+        setCloudinaryImages((prev) => [newImage, ...prev]);
       }
     } catch (err) {
       console.error('Error subiendo imagen:', err);
@@ -106,12 +113,21 @@ export default function Gallery() {
     if (file) handleImageUpload(file);
   };
 
-  const handleDeleteImage = (src: string) => {
-    setUploadedImages((prev) => {
-      const updated = prev.filter((img) => img.src !== src);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
+  const handleDeleteImage = async (publicId: string) => {
+    setDeleting(publicId);
+    try {
+      await fetch('/api/gallery', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ public_id: publicId }),
+      });
+      setCloudinaryImages((prev) => prev.filter((img) => img.publicId !== publicId));
+    } catch (err) {
+      console.error('Error eliminando imagen:', err);
+      alert('Error al eliminar la imagen. Inténtalo de nuevo.');
+    } finally {
+      setDeleting(null);
+    }
   };
 
   const handleEnterEditMode = () => {
@@ -157,7 +173,7 @@ export default function Gallery() {
           }}
         >
           {images.map((img, index) => {
-            const isUploaded = index < uploadedImages.length;
+            const canDelete = !img.isDefault && !!img.publicId;
             return (
               <div
                 key={img.src}
@@ -182,12 +198,13 @@ export default function Gallery() {
                     display: 'block',
                   }}
                 />
-                {editMode && isUploaded && (
+                {editMode && canDelete && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteImage(img.src);
+                      handleDeleteImage(img.publicId!);
                     }}
+                    disabled={deleting === img.publicId}
                     style={{
                       position: 'absolute',
                       top: '8px',
