@@ -7,13 +7,13 @@
 const PRODUCTS = [
   {
     image: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781472447/WhatsApp_Image_2026-06-14_at_1.28.42_PM_ddfwka.jpg',
-    name: 'Tratamiento Profesional',
+    name: 'Keratina Premium',
     description: 'Línea de productos de alta concentración para tratamientos intensivos de recuperación capilar.',
     benefits: ['Recuperación profunda', 'Brillo intenso', 'Fórmula profesional'],
   },
   {
     image: 'https://res.cloudinary.com/dsqjvn7xw/image/upload/v1781472447/WhatsApp_Image_2026-06-14_at_1.28.37_PM_mwqerl.jpg',
-    name: 'Keratina Premium',
+    name: 'Tratamiento Profesional',
     description: 'Productos de keratina de última generación para un alisado duradero y sin daño capilar.',
     benefits: ['Alisado duradero', 'Sin formol opcional', 'Hidratación máxima'],
   },
