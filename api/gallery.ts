@@ -9,10 +9,6 @@ cloudinary.config({
 
 const TAG = 'neicy_gallery';
 
-function buildImageUrl(publicId: string, format: string) {
-  return `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/q_auto,f_auto/${publicId}.${format}`;
-}
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
     try {
@@ -25,7 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const images = result.resources.map((r: any) => ({
         public_id: r.public_id,
         format: r.format,
-        url: buildImageUrl(r.public_id, r.format),
+        url: r.secure_url,
         alt: r.public_id,
       }));
 

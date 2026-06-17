@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 
 interface GalleryImage {
   src: string;
+  url?: string;
   alt: string;
   publicId?: string;
   isDefault?: boolean;
@@ -52,8 +53,14 @@ export default function Gallery() {
     fetch('/api/gallery')
       .then((res) => res.json())
       .then((data) => {
+        console.log('Gallery data:', JSON.stringify(data));
         if (data.images) {
-          setCloudinaryImages(data.images);
+          const mappedImages = data.images.map((img: any) => ({
+            ...img,
+            src: img.url,
+            publicId: img.public_id,
+          }));
+          setCloudinaryImages(mappedImages);
         }
       })
       .catch((err) => console.error('Error fetching gallery:', err));
